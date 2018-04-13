@@ -1,68 +1,56 @@
-# Zhi Huang 04/09/2018
-
+# Zhi Huang 04/12/2018
 library(circlize)
-library(openxlsx)
-setwd("~/Desktop/TSUNAMI/shiny")
-data <- read.xlsx("./MarkData.xlsx", sheet = 1, startRow = 1, colNames = T, rowNames = T)
-# genes_str <- c("LOC102725121", "FAM138A", "RIMS2", "LINC01128", "MMP23A", "ULK4P1")
-genes_str <- data[,1]
 
-
-
-
-# import hg19 and hg38
-load("./data/UCSC_hg19_refGene_20180330.Rdata") # varname: hg19
-load("./data/UCSC_hg38_refGene_20180330.Rdata") # varname: hg38
-hg19 <- data.frame(cbind(rownames(hg19), hg19, hg19[6]-hg19[5]))
-hg38 <- data.frame(cbind(rownames(hg38), hg38, hg38[6]-hg38[5]))
-colnames(hg38) = c("id","","name","chrom","strand","txStart","txEnd","cdsStart","cdsEnd","exonCount","exonStarts","exonEnds","proteinID","alignID","","","","length")
-colnames(hg19) = c("id","","name","chrom","strand","txStart","txEnd","cdsStart","cdsEnd","exonCount","exonStarts","exonEnds","proteinID","alignID","","","","length")
-hg19.ring <- hg19[!grepl("_", hg19$chrom),] # remove undefined chromosome
-hg38.ring <- hg38[!grepl("_", hg38$chrom),]
-hg19.ring <- hg19.ring[!grepl("chrM", hg19.ring$chrom),]
-hg38.ring <- hg38.ring[!grepl("chrM", hg38.ring$chrom),]
-hg19.matched <- hg19.ring[match(genes_str, hg19.ring$alignID, nomatch = 0), ]
-hg38.matched <- hg38.ring[match(genes_str, hg38.ring$alignID, nomatch = 0), ]
-hg19.ring.lengthsum <- aggregate(hg19.ring["length"],hg19.ring["chrom"],sum)
-hg38.ring.lengthsum <- aggregate(hg38.ring["length"],hg38.ring["chrom"],sum)
-
-factors_count = as.data.frame(hg38.ring.lengthsum)
-factors = factor(factors_count[,1], levels = factors_count[,1])
-xlim = cbind(rep(0, dim(factors_count)[1]), factors_count[,2])
-rownames(xlim) = factors_count[,1]
-BED.data <- data.frame(hg38.matched[,c(4,6:7,10,14)])
-BED.data$txStart <- as.numeric(sub('.*\\:', '', data$Location ))
-BED.data$Type <- data$Type
-BED.data$Alteration <- data$Alteration
-BED.data$Drug <- data$Drug
-BED.data$Location <- data$Location
-BED.data$IDandDrug <- paste0(data$Gene, " (", data$Drug, ")")
-for(i in 1:dim(data)[1]){
-  if(is.na(data$Drug[i])){
-    BED.data$IDandDrug[i] <- data$Gene[i]
+circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.scale = 1, line.width = 5, line.color="pink"){
+  
+  genes_str <- data[,2]
+  # print(genes_str)
+  # import hg19 and hg38
+  if(hg.number == "hg19"){
+    load("./data/UCSC_hg19_refGene_20180330.Rdata") # varname: hg19
+    hg <- data.frame(cbind(rownames(hg19), hg19, hg19[6]-hg19[5]))
   }
-}
+  if(hg.number == "hg38"){
+    load("./data/UCSC_hg38_refGene_20180330.Rdata") # varname: hg38
+    hg <- data.frame(cbind(rownames(hg38), hg38, hg38[6]-hg38[5]))
+  }
+  colnames(hg) = c("id","","name","chrom","strand","txStart","txEnd","cdsStart","cdsEnd","exonCount","exonStarts","exonEnds","proteinID","alignID","","","","length")
+  hg.ring <- hg[!grepl("_", hg$chrom),] # remove undefined chromosome
+  hg.ring <- hg.ring[!grepl("chrM", hg.ring$chrom),]
+  hg.matched <- hg.ring[match(genes_str, hg.ring$alignID, nomatch = 0), ]
+  hg.ring.lengthsum <- aggregate(hg.ring["length"],hg.ring["chrom"],sum)
+  
+  factors_count = as.data.frame(hg.ring.lengthsum)
+  factors = factor(factors_count[,1], levels = factors_count[,1])
+  xlim = cbind(rep(0, dim(factors_count)[1]), factors_count[,2])
+  rownames(xlim) = factors_count[,1]
+  BED.data <- data.frame(hg.matched[,c(4,6:7,10,14)])
+  BED.data$txStart <- as.numeric(sub('.*\\:', '', data$Location ))
+  BED.data$Type <- data$Type
+  BED.data$Alteration <- data$Alteration
+  BED.data$Drug <- data$Drug
+  BED.data$Location <- data$Location
+  BED.data$IDandDrug <- paste0(data$Gene, " (", data$Drug, ")")
+  for(i in 1:dim(data)[1]){
+    if(is.na(data$Drug[i])){
+      BED.data$IDandDrug[i] <- data$Gene[i]
+    }
+  }
 
-
-
-
-
-
-circlizeGenomics2 <- function(BED.data, factors, xlim, myTitle){
   par(mar = c(1, 1, 1, 1))
   circos.clear()
   circos.par(cell.padding = c(0, 0, 0, 0))
   # circos.initializeWithIdeogram(plotType = c("axis", "labels"))
   circos.initializeWithIdeogram(plotType = NULL)
   circos.genomicLabels(BED.data, labels.column = 10, side = "outside",
-                       col = "black", line_col = "blue", cex = 0.5)
+                       col = "black", line_col = "blue", cex = 0.5*font.scale)
   
   circos.track(ylim = c(0, 1), panel.fun = function(x, y) {
     chr = CELL_META$sector.index
     xlim = CELL_META$xlim
     ylim = CELL_META$ylim
     circos.rect(xlim[1], 0, xlim[2], 1, col = rand_color(1))
-    circos.text(mean(xlim), mean(ylim), chr, cex = 0.4, col = "white", facing = "inside", niceFacing = TRUE)
+    circos.text(mean(xlim), mean(ylim), chr, cex = 0.4*font.scale, col = "white", facing = "inside", niceFacing = TRUE)
   }, track.height = 0.08, bg.border = NA)
 
   title(myTitle)
@@ -76,7 +64,7 @@ circlizeGenomics2 <- function(BED.data, factors, xlim, myTitle){
     pt2 = as.numeric(unlist(strsplit(location[2], ":")))[2]
     circos.link(sector.index1=paste("chr", chrom1, sep=""), point1=pt1,
                 sector.index2=paste("chr", chrom2, sep=""), point2=pt2,
-                col = "pink", lwd = 5)
+                col = line.color, lwd = line.width)
     # R color: http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
   }
   circos.genomicTrack(BED.data, track.height = 0.05, bg.border = NA,
@@ -129,16 +117,9 @@ circlizeGenomics2 <- function(BED.data, factors, xlim, myTitle){
                             circos.genomicPoints(current_region, value = current_value, pch = 15, col="darkgreen", ...)
                           }
                           else if(current_value$Type == "EXP Protein" & current_value$Alteration == "DOWN"){
-                            circos.genomicPoints(current_region, value = current_value, pch = 15, col="red", ...)
+                            circos.genomicPoints(current_region, value = current_value, pch = 14, col="red", ...)
                           }
                         }
                       })
-  
-  
-  
-  
-    
-  
   circos.clear()
 }
-circlizeGenomics2(BED.data, factors, xlim, "Cancer Genome")

@@ -1,5 +1,6 @@
 # 04/12/2018 Zhi Huang
 library(shinyWidgets)
+library(colourpicker)
 
 navbarPage(title=div(a(img(src="images/logo.png",
                            height = 35,
@@ -37,6 +38,10 @@ navbarPage(title=div(a(img(src="images/logo.png",
                                                  selected = '"'))
                         ),
                         # Horizontal line ----
+                        p('If you want a sample data file to upload,',
+                          'you can first download the sample',
+                          a(href =  'MarkData.xlsx', 'MarkData.xlsx'),
+                          'file, and then try uploading it'),
                         tags$hr(),
                         actionButton("action1", "Confirm when Complete"),
                         conditionalPanel(condition = "input.action1",
@@ -82,6 +87,96 @@ navbarPage(title=div(a(img(src="images/logo.png",
                          ) # end of sidebarLayout
                     
                     ),
-           tabPanel("Visualization"),
-           tabPanel("About")
+           tabPanel("Visualization",
+                    sidebarLayout(
+                      position = "left",
+                      sidebarPanel(
+                        width = 3,
+                        h4("Change Plot Size", style="color: STEELBLUE"),
+                        sliderInput(inputId="plot.width", label="Plot Width:", min=200, max=2000, value=800),
+                        sliderInput(inputId="plot.height", label="Plot Height:", min=200, max=2000, value=800),
+                        fluidRow(
+                          column(6, numericInput(inputId="font.scale", label="Font Scale:", value = 1, min = 0.2, max=10, step = 0.1)),
+                          column(6, numericInput(inputId="line.width", label="Line Width:", value = 5, min = 1, max=100, step = 1))
+                        ),
+                        colourInput(inputId="color.picker",label="Choose Line Color:",value="pinkW",
+                                    showColour = "both",palette = "square"),
+                        actionButton("action3", "Refresh", style="color: WHITE; background-color: DODGERBLUE")
+                        
+                        
+                      ),
+                      mainPanel(
+                        h2("hg19:", style="color: STEELBLUE; font-size: 22px"),
+                        plotOutput("circos.plot.1", width = "100%", height = "100%"),
+                        h2("hg38:", style="color: STEELBLUE; font-size: 22px"),
+                        plotOutput("circos.plot.2", width = "100%", height = "100%"),
+                        h2("Legend:", style="color: STEELBLUE; font-size: 22px"),
+                        plotOutput("circos.plot.legend", width = "400px", height = "400px")
+                      ) # end of mainPanel
+                    ) # end of sidebarLayout
+                    ),
+           tabPanel("About",
+                    h3("About Us", style="color: STEELBLUE; padding-bottom: 20px"),
+                    tags$div(
+                      tags$img(src='images/IUSM2.png',
+                               height="100",
+                               alt="TSUNAMI", class="center", style="padding: 30px"),
+                      tags$img(src='images/regenstrief.png',
+                               height="100",
+                               alt="TSUNAMI", class="center", style="padding: 30px"),
+                      style="text-align: center; padding: 20px"
+                    ),
+                    h4("Our Other Softwares", style="color: STEELBLUE; padding-bottom: 20px"),
+                    tags$div(
+                      a(tags$img(src='images/tsunami_logo.png',
+                                 height="45",
+                                 alt="TSUNAMI", class="center", style="padding: 5px"), href="https://apps.medgen.iupui.edu/rsc/tsunami/", target="_blank"),
+                      br(),a("TSUNAMI: Translational Bioinformatics Tool SUite for Network Analysis and MIning",
+                             href="https://apps.medgen.iupui.edu/rsc/tsunami/", target="_blank"),
+                      br(),br(),
+                      a(tags$img(src='images/lmQCM_logo.png',
+                                 height="60",
+                                 alt="lmQCM", class="center", style="padding: 5px"), href="https://CRAN.R-project.org/package=lmQCM", target="_blank"),
+                      br(),a("R package: lmQCM", href="https://CRAN.R-project.org/package=lmQCM", target="_blank"),
+                      br(),br(),
+                      a(tags$img(src='images/annoPeak_logo.png',
+                                 height="40",
+                                 alt="annoPeak", class="center", style="padding: 5px"), href="https://apps.medgen.iupui.edu/rsc/content/19/", target="_blank"),
+                      br(),a("annoPeakR: a web-tool to annotate, visualize and compare peak sets from ChIP-seq/ChIP-exo", href="https://apps.medgen.iupui.edu/rsc/content/19/", target="_blank"),
+                      style="text-align: center; padding: 5px"
+                    ),
+                    br(),
+                    tags$div(
+                      tags$img(src='images/iGenomicsR_logo2.png',
+                               height="40",
+                               alt="iGenomicsR", class="center", style="padding: 5px"),
+                      br(),"Coming Soon",
+                      br(),br(),
+                      tags$img(src='images/iGPSe_logo.png',
+                               height="50",
+                               alt="iGPSe", class="center", style="padding: 5px"),
+                      br(),"Coming Soon",
+                      style="text-align: center; padding: 5px"
+                    ),
+                    h4("Development Team", style="color: STEELBLUE; padding-bottom: 20px"),
+                    h5("Prof. Kun Huang's Laboratory", style="color: STEELBLUE"),
+                    tags$ul(
+                      tags$li("Zhi Huang"),
+                      tags$li("Zhi Han"),
+                      tags$li("Jie Zhang"),
+                      tags$li("Kun Huang")
+                    ),
+                    h4("Publications", style="color: STEELBLUE; padding-bottom: 20px"),
+                    tags$ul(
+                      tags$li("-")
+                    )
+                  ),
+           tags$div(
+             p(a(img(src="images/logo.png",
+                     height = 18,
+                     style = "margin:-2px 0px; padding-bottom: 0px"), href=""),
+               a("Circos Viewer", href=""), "Version v1.0 | ", a("IUSM",href="https://medicine.iu.edu/", target="_blank"), " | ", a("RI",href="http://www.regenstrief.org/", target="_blank"), style="color: grey; font-size: 12px"), 
+             p("Questions and feedback: zhihuan@iu.edu | ", a("Report Issue", href="zhihuan@iu.edu", target="_blank"), " | ", a("Github", href="", target="_blank"), style="color: grey; font-size: 12px"),
+             style="text-align: center; padding-top: 40px"
+           )
 )
