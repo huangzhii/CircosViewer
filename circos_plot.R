@@ -1,7 +1,7 @@
 # Zhi Huang 04/12/2018
 library(circlize)
 
-circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.scale = 1, line.width = 5, plot.margin = 10, line.color="pink"){
+circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.scale = 1, symbol.size = 2, line.width = 5, plot.margin = 10, line.color="pink"){
   
   genes_str <- data[,2]
   # print(genes_str)
@@ -30,7 +30,8 @@ circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.
   BED.data$Alteration <- data$Alteration
   BED.data$Drug <- data$Drug
   BED.data$Location <- data$Location
-  BED.data$IDandDrug <- paste0(data$Gene, " (", data$Drug, ")")
+  # BED.data$IDandDrug <- paste0(data$Gene, " (", data$Drug, ")")
+  BED.data$IDandDrug <- data$Gene
   for(i in 1:dim(data)[1]){
     if(is.na(data$Drug[i])){
       BED.data$IDandDrug[i] <- data$Gene[i]
@@ -75,19 +76,19 @@ circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.
                           current_value = value[i,]
                           current_region = region[i,]
                           if(current_value$Type == "CNA" & current_value$Alteration == "AMP"){
-                            circos.genomicPoints(current_region, value = current_value, pch = 8, col="darkgreen", ...)
+                            circos.genomicPoints(current_region, value = current_value, cex = symbol.size, pch = 8, col="darkgreen", ...)
                           }
                           else if(current_value$Type == "CNA" & current_value$Alteration == "HOMDEL"){
-                            circos.genomicPoints(current_region, value = current_value, pch = 8, col="red", ...)
+                            circos.genomicPoints(current_region, value = current_value, cex = symbol.size, pch = 8, col="red", ...)
                           }
                           else if(current_value$Type == "Inframe"){
-                            circos.genomicPoints(current_region, value = current_value, pch = 16, col="darkgreen", ...)
+                            circos.genomicPoints(current_region, value = current_value, cex = symbol.size, pch = 16, col="darkgreen", ...)
                           }
                           else if(current_value$Type == "Missense"){
-                            circos.genomicPoints(current_region, value = current_value, pch = 16, col="black", ...)
+                            circos.genomicPoints(current_region, value = current_value, cex = symbol.size, pch = 16, col="black", ...)
                           }
                           else if(current_value$Type == "Truncation"){
-                            circos.genomicPoints(current_region, value = value[i,], pch = 16, col="red", ...)
+                            circos.genomicPoints(current_region, value = value[i,], cex = symbol.size, pch = 16, col="red", ...)
                           }
                         }
                       })
@@ -99,10 +100,10 @@ circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.
                           current_value = value[i,]
                           current_region = region[i,]
                           if(current_value$Type == "EXP mRNA" & current_value$Alteration == "UP"){
-                            circos.genomicPoints(current_region, value = current_value, pch = 24, col="darkgreen", ...)
+                            circos.genomicPoints(current_region, value = current_value, cex = symbol.size, pch = 24, col="darkgreen", ...)
                           }
                           else if(current_value$Type == "EXP mRNA" & current_value$Alteration == "DOWN"){
-                            circos.genomicPoints(current_region, value = current_value, pch = 25, col="red", ...)
+                            circos.genomicPoints(current_region, value = current_value, cex = symbol.size, pch = 25, col="red", ...)
                           }
                         }
                       })
@@ -114,10 +115,10 @@ circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.
                           current_value = value[i,]
                           current_region = region[i,]
                           if(current_value$Type == "EXP Protein" & current_value$Alteration == "UP"){
-                            circos.genomicPoints(current_region, value = current_value, pch = 15, col="darkgreen", ...)
+                            circos.genomicPoints(current_region, value = current_value, cex = symbol.size, pch = 15, col="darkgreen", ...)
                           }
                           else if(current_value$Type == "EXP Protein" & current_value$Alteration == "DOWN"){
-                            circos.genomicPoints(current_region, value = current_value, pch = 14, col="red", ...)
+                            circos.genomicPoints(current_region, value = current_value, cex = symbol.size, pch = 14, col="red", ...)
                           }
                         }
                       })
