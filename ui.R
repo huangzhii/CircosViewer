@@ -41,7 +41,7 @@ navbarPage(title=div(a(img(src="images/logo.png",
                         p('If you want a sample data file to upload,',
                           'you can first download the sample',
                           a(href =  'MarkData.xlsx', 'MarkData.xlsx'),
-                          'file, and then try uploading it'),
+                          'file, and then try uploading it.'),
                         tags$hr(),
                         actionButton("action1", "Confirm when Complete"),
                         conditionalPanel(condition = "input.action1",
@@ -95,11 +95,12 @@ navbarPage(title=div(a(img(src="images/logo.png",
                         h4("Change Plot Size", style="color: STEELBLUE"),
                         sliderInput(inputId="plot.width", label="Plot Width:", min=200, max=2000, value=800),
                         sliderInput(inputId="plot.height", label="Plot Height:", min=200, max=2000, value=800),
+                        sliderInput(inputId="plot.margin", label="Plot Margin:", min=0, max=200, value=10),
                         fluidRow(
-                          column(6, numericInput(inputId="font.scale", label="Font Scale:", value = 1, min = 0.2, max=10, step = 0.1)),
+                          column(6, numericInput(inputId="font.scale", label="Font Size:", value = 1, min = 0.2, max=10, step = 0.1)),
                           column(6, numericInput(inputId="line.width", label="Line Width:", value = 5, min = 1, max=100, step = 1))
                         ),
-                        colourInput(inputId="color.picker",label="Choose Line Color:",value="pinkW",
+                        colourInput(inputId="color.picker",label="Choose Line Color:",value="pink",
                                     showColour = "both",palette = "square"),
                         actionButton("action3", "Refresh", style="color: WHITE; background-color: DODGERBLUE")
                         

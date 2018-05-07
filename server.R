@@ -118,11 +118,13 @@ function(input, output, session) {
     if(!is.null(loadData.csv()) ){
       output$circos.plot.1 <- renderPlot({
         circosPlot(data = csv, hg.number = "hg19", myTitle = "Human Genome (hg19)",
-                   font.scale = input$font.scale, line.width = input$line.width, line.color = input$color.picker)
+                   font.scale = input$font.scale, line.width = input$line.width,
+                   plot.margin = input$plot.margin, line.color = input$color.picker)
       }, height = input$plot.height, width = input$plot.width)
       output$circos.plot.2 <- renderPlot({
         circosPlot(data = csv, hg.number = "hg38", myTitle = "Human Genome (hg38)",
-                   font.scale = input$font.scale, line.width = input$line.width, line.color = input$color.picker)
+                   font.scale = input$font.scale, line.width = input$line.width,
+                   plot.margin = input$plot.margin, line.color = input$color.picker)
       }, height = input$plot.height, width = input$plot.width)
     }
     else{

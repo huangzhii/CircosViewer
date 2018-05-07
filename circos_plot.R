@@ -1,7 +1,7 @@
 # Zhi Huang 04/12/2018
 library(circlize)
 
-circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.scale = 1, line.width = 5, line.color="pink"){
+circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.scale = 1, line.width = 5, plot.margin = 10, line.color="pink"){
   
   genes_str <- data[,2]
   # print(genes_str)
@@ -37,13 +37,13 @@ circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.
     }
   }
 
-  par(mar = c(1, 1, 1, 1))
+  par(mar = c(plot.margin, plot.margin, plot.margin, plot.margin))
   circos.clear()
   circos.par(cell.padding = c(0, 0, 0, 0))
   # circos.initializeWithIdeogram(plotType = c("axis", "labels"))
   circos.initializeWithIdeogram(plotType = NULL)
-  circos.genomicLabels(BED.data, labels.column = 10, side = "outside",
-                       col = "black", line_col = "blue", cex = 0.5*font.scale)
+  circos.genomicLabels(BED.data, labels.column = 10, side = "downward",
+                       col = "black", line_col = "blue", cex = 0.5*font.scale) # genes and drugs
   
   circos.track(ylim = c(0, 1), panel.fun = function(x, y) {
     chr = CELL_META$sector.index
