@@ -32,9 +32,11 @@ circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.
   BED.data$Location <- data$Location
   # BED.data$IDandDrug <- paste0(data$Gene, " (", data$Drug, ")")
   BED.data$IDandDrug <- data$Gene
-  for(i in 1:dim(data)[1]){
-    if(is.na(data$Drug[i])){
-      BED.data$IDandDrug[i] <- data$Gene[i]
+  if(!is.null(BED.data$Drug)){
+    for(i in 1:dim(data)[1]){
+      if(is.na(data$Drug[i])){
+        BED.data$IDandDrug[i] <- data$Gene[i]
+      }
     }
   }
 
@@ -57,17 +59,19 @@ circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.
 
   title(myTitle)
   BED.data.link = BED.data[BED.data$Type == "FUSION",]
-  for (i in 1:dim(BED.data.link)[1]){
-    location = gsub(" ", "", BED.data.link$Location[i], fixed = TRUE)
-    location = unlist(strsplit(location, "-"))
-    chrom1 = unlist(strsplit(location[1], ":"))[1]
-    pt1 = as.numeric(unlist(strsplit(location[1], ":")))[2]
-    chrom2 = unlist(strsplit(location[2], ":"))[1]
-    pt2 = as.numeric(unlist(strsplit(location[2], ":")))[2]
-    circos.link(sector.index1=paste("chr", chrom1, sep=""), point1=pt1,
-                sector.index2=paste("chr", chrom2, sep=""), point2=pt2,
-                col = line.color, lwd = line.width)
-    # R color: http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
+  if(dim(BED.data.link)[1] != 0){ # no fusion
+    for (i in 1:dim(BED.data.link)[1]){
+      location = gsub(" ", "", BED.data.link$Location[i], fixed = TRUE)
+      location = unlist(strsplit(location, "-"))
+      chrom1 = unlist(strsplit(location[1], ":"))[1]
+      pt1 = as.numeric(unlist(strsplit(location[1], ":")))[2]
+      chrom2 = unlist(strsplit(location[2], ":"))[1]
+      pt2 = as.numeric(unlist(strsplit(location[2], ":")))[2]
+      circos.link(sector.index1=paste("chr", chrom1, sep=""), point1=pt1,
+                  sector.index2=paste("chr", chrom2, sep=""), point2=pt2,
+                  col = line.color, lwd = line.width)
+      # R color: http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
+    }
   }
   circos.genomicTrack(BED.data, track.height = 0.05, bg.border = NA,
                       panel.fun = function(region, value, ...) {
