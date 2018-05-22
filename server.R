@@ -45,11 +45,6 @@ function(input, output, session) {
           print("txt file Processed.")
         } else if(fileExtension == "xlsx" || fileExtension == "xls"){
           data_temp <- read.xlsx(input$csvfile$datapath, sheet = 1, startRow = 1, colNames = TRUE)
-          if(data_temp[dim(data_temp)[1],1] == "!series_matrix_table_end"){
-            print("remove last row with \"!series_matrix_table_end\" ")
-            data_temp = data_temp[-dim(data_temp)[1],]
-          }
-          # data_temp <- print.data.frame(data.frame(data_temp), quote=FALSE)
           csv <<- data_temp
           print("xlsx / xls file Processed.")
         }

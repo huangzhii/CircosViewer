@@ -43,7 +43,8 @@ circosPlot <- function(data, hg.number = "hg38", myTitle = "Human Genome", font.
   circos.par(cell.padding = c(0, 0, 0, 0))
   # circos.initializeWithIdeogram(plotType = c("axis", "labels"))
   circos.initializeWithIdeogram(plotType = NULL)
-  circos.genomicLabels(BED.data, labels.column = 10, side = "downward",
+  
+  circos.genomicLabels(BED.data, labels.column = dim(BED.data)[2], side = "downward",
                        col = "black", line_col = "blue", cex = 0.5*font.scale) # genes and drugs
   
   circos.track(ylim = c(0, 1), panel.fun = function(x, y) {
